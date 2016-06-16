@@ -11,11 +11,16 @@
 	<ListView
 		android:id="@+id/song_list"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="456dp"
 		android:divider = "#ffffff"
 		android:dividerHeight="2px"
 		android:transitionGroup="false">
 	</ListView>
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="fill_parent"
+		android:layout_gravity="center_horizontal"></FrameLayout>
 
 
 </LinearLayout>
