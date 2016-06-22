@@ -15,8 +15,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.ArrayList;
 
+/**
+ * Klasa aktwności obsługjąca equalizer. Wyświetla na ekranie suwaki reprezentujące poszczególne
+ * kanały i umożliwia manipulację nimi.
+ */
+
 public class EqualizerActivity extends AppCompatActivity {
 
+    /**
+     * Metoda obsługująca zdarzenie onCreate, wywoływana po stworzeniu okna aktywności.
+     * Tworzymy w niej nowy obiekt klasy Equalizer na podstawie identyfikatora klasy MediaPlayer
+     * odtwarzającej dźwięk, przesłanego do aktywności.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +42,11 @@ public class EqualizerActivity extends AppCompatActivity {
         setupEqualizerFxAndUI();
     }
 
+    /**
+     * Funckja pobiera z urządzenia listę presetów dźwiękowych dla equalizera, a następnie wyświetla
+     * je w rozwijanym menu. Zawiera także anonimową klasę obsługującą wybór pozycji z tego menu i
+     * ustawiającą suwaki na odpowiednich pozycjach.
+     */
     private void equalizeSound() {
 //        set up the spinner
         ArrayList<String> equalizerPresetNames = new ArrayList<String>();
@@ -76,6 +93,10 @@ public class EqualizerActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Funkcja obsługuje suwaki reprezentujące poszczególne kanały. Prz pomocy metod z klasy Equalizer,
+     * manipuluje dźwiękiem zgodie ze wskazaniami suwaków.
+     */
     private void setupEqualizerFxAndUI() {
         LinearLayout mLinearLayout = (LinearLayout) findViewById(R.id.linearLayoutEqual);
 
@@ -169,6 +190,10 @@ public class EqualizerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Metoda obsługujaca zdarzenie onPause. Jeżeli zdarzenie jest wywoływane przed zamknięciem aplikacji,
+     * "uwalnia" obiekt klasy Equalizer.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -178,5 +203,5 @@ public class EqualizerActivity extends AppCompatActivity {
         }
     }
 
-    private Equalizer equ;
+    private Equalizer equ; // Pole zawierające obiekt klasy equalizer
 }

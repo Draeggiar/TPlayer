@@ -6,20 +6,33 @@ import android.view.KeyEvent;
 import android.widget.MediaController;
 
 /**
- * Created by Tama on 16.03.2016.
+ * Klasa określająca kontroler muzyki. Rozszerza domyślną klasę kontrolera MediaController.
  */
 public class MusicController extends MediaController {
 
+    /**
+     * Publiczny konstruktor wywołujący konstruktro klasy bazowe
+     *
+     * @param c context
+     */
     public MusicController(Context c){
         super(c);
     }
 
-    public void hide(){}
-
+    /**
+     * Metoda pokazująca odtwarzacz, wywyłuje metodę z klasy bazowej.
+     */
     public void show(){
         super.show();
     }
 
+    /**
+     * Metoda obsługująca zdarzenia klawiszy. W naszym wypadku chowa odtwarzacz i kontunuuje odtwarzanie
+     * w tle.
+     *
+     * @param event obiekt klasy KeyEvent
+     * @return
+     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         int keyCode = event.getKeyCode();

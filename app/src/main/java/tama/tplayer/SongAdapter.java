@@ -15,35 +15,70 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+/**
+ * Klasa adaptera odpowiadająca za wygląd elementów wyświetlanych w liście piosenek.
+ * Rozszerza klasę BaseAdapter, czyli klasę domyślnego adaptera listy.
+ */
+
 public class SongAdapter extends BaseAdapter {
 	
-	//song list and layout
+	//Lista piosenek i layout
 	private ArrayList<Song> songs;
 	private LayoutInflater songInf;
 	private Context context;
-	
-	//constructor
+
+	/**
+	 * Konstruktor wywoływany przy tworzeniu adaptera, przypusuje wartości prywatnym polom klasy
+	 *
+	 * @param c View context
+	 * @param theSongs lista piosenek
+     */
 	public SongAdapter(Context c, ArrayList<Song> theSongs){
 		songs=theSongs;
 		songInf=LayoutInflater.from(c);
 		context=c;
 	}
 
+	/**
+	 * Metoda zwracająca rozmiar listy z piosenkami.
+	 *
+	 * @return zwraca liczbę piosenek na liście
+     */
 	@Override
 	public int getCount() {
 		return songs.size();
 	}
 
+	/**
+	 * Metoda z interfejsu android.widget.Adapter. Nie jest używana w programie.
+	 *
+	 * @param arg0
+	 * @return
+     */
 	@Override
 	public Object getItem(int arg0) {
 		return null;
 	}
 
+	/**
+	 * Metoda z interfejsu android.widget.Adapter. Nie jest używana w programie.
+	 *
+	 * @param arg0
+	 * @return
+	 */
 	@Override
 	public long getItemId(int arg0) {
 		return 0;
 	}
 
+	/**
+	 * Metoda służąca do konfigurowania wyglądu poszczególnych elementów listy.
+	 *
+	 * @param position pozycja na liście
+	 * @param convertView view
+	 * @param parent view parent
+     * @return zwraca layout piosenek jako obiekt klasy RelativeLayout
+     */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		//map to song layout

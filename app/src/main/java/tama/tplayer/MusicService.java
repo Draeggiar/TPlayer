@@ -19,12 +19,16 @@ import android.app.Notification;
 import android.app.PendingIntent;
 
 /**
- * Created by Tama on 16.03.2016.
+ * Usługa obsługująca odtwarzanie muzyki w programie. Imlementuje ona wybrane metody z
+ * interfejsu MediaPlayer.
  */
-public class MusicService extends Service implements
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener {
+public class MusicService extends Service implements MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
+    /**
+     * Metoda obsługująca zdarzenie onCreate. Służy jako konstruktor i przypisuje początkowe
+     * wartośi wybraym polom w klasie.
+     */
     public void onCreate(){
         //create the service
         super.onCreate();
@@ -36,6 +40,9 @@ public class MusicService extends Service implements
         initMusicPlayer();
     }
 
+    /**
+     * Metoda inicjalizująca odtwarzacz, którym jest prywatny obiekt MediaPlayer.
+     */
     public void initMusicPlayer(){
         player.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
@@ -46,16 +53,29 @@ public class MusicService extends Service implements
         player.setOnErrorListener(this);
     }
 
+    /**
+     * Setter przypisujący wartość do prywatnego pola przechowującego listę piosenek.
+     *
+     * @param theSongs referencja do listy piosenek typu ArrayList
+     */
     public void setList(ArrayList<Song> theSongs){
         songs=theSongs;
     }
 
+    /**
+     * Wewnętrzna klasa rozszerzajaca klasę Binder. Potrzebna do połączenia usługi z klasą głównej
+     * aktywności. Zawiera metodę zwracającą obiekt do klasy głównej, ponieważ to ona jest usługą.
+     */
     public class MusicBinder extends Binder {
         MusicService getService() {
             return MusicService.this;
         }
     }
 
+    /**
+     * Metoda inicjalizująca odtwarzanie dźwięku. Pobiera wybraną piosenkę z listy i próbuje
+     * ją odtworzyć.
+     */
     public void playSong(){
         player.reset();
         //get song
@@ -76,11 +96,17 @@ public class MusicService extends Service implements
         player.prepareAsync();
     }
 
+    /**
+     * Włącza lub wyłącza odtwarzanie losowe po kliknięciu na przycisk.
+     */
     public void setShuffle(){
         if(shuffle) shuffle=false;
         else shuffle=true;
     }
 
+    /**
+     * Uruchamia aktywność equalizera po kliknięciu na przycisk.
+     */
     public void setEqualizer(){
         Intent intent = new Intent(this, EqualizerActivity.class);
         intent.putExtra("eq", player.getAudioSessionId());
@@ -88,41 +114,80 @@ public class MusicService extends Service implements
         startActivity(intent);
     }
 
+    /**
+     * Ustawia wskaźnik na aktualnie wybraną piosenkę.
+     *
+     * @param songIndex pozycja wybranej piosenki na liście
+     */
     public void setSong(int songIndex){
         songPosn=songIndex;
     }
 
+    /**
+     * Zwraca aktualny czas odtwarzania
+     *
+     * @return zwraca czas w milisekundach
+     */
     public int getPosn(){
         return player.getCurrentPosition();
     }
 
+    /**
+     * Zwraca długość aktualnie odtwarzanego utworu
+     *
+     * @return długość utworu w milisekundach, -1 gdy długość nie jest dostępna
+     */
     public int getDur(){
         return player.getDuration();
     }
 
+    /**
+     * Zwraca aktualny stan odtwarzania
+     *
+     * @return true jeżeli aktualnie jest odtwarzany dźwięk
+     */
     public boolean isPng(){
         return player.isPlaying();
     }
 
+    /**
+     * Metoda służąca do zapauzowania odtwarzacza
+     */
     public void pausePlayer() {
         player.pause();
     }
 
+    /**
+     * Przewija odtwarzanie do wskazanej pozycji.
+     *
+     * @param posn offset od początku utworu, o jaki chcemy przesunąć odtwarzanie
+     */
     public void seek(int posn){
         player.seekTo(posn);
     }
 
+    /**
+     * Wznawia odtwarzanie. Jeżeli było wcześniej zapauzowane, wznawia od momentu pauzy. Jeżeli nie,
+     * zaczyna odtwarzanie od początku.
+     */
     public void go(){
         player.start();
     }
 
+    /**
+     * Odtwarza utwór poprzedzajacy aktualny na liście. Jeżeli użyjemy tej odpcji dla pierwszego elementu,
+     * odtworzony zostanie ostatni na liście.
+     */
     public void playPrev(){
         songPosn--;
         if(songPosn<0) songPosn=songs.size()-1;
         playSong();
     }
 
-    //skip to next
+    /**
+     * Odtwarza następny utwór na liście. Jeżeli właczone jest odtwarzanie losowe, odtwarza losowy
+     * utwór.
+     */
     public void playNext(){
         if(shuffle){
             int newSong = songPosn;
@@ -138,11 +203,24 @@ public class MusicService extends Service implements
         playSong();
     }
 
+    /**
+     * Obługuje zdarzenie onBind. Zwraca obiekt klasy MusicBinder, służącej do połączenia głównej
+     * aktywności z usługą.
+     *
+     * @param intent
+     * @return
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return musicBind;
     }
 
+    /**
+     * Metoda obsługująca zdarzenie onUnbind. Dba o prawidłowe rozłączenie z usługą.
+     *
+     * @param intent
+     * @return
+     */
     @Override
     public boolean onUnbind(Intent intent){
         player.stop();
@@ -150,6 +228,12 @@ public class MusicService extends Service implements
         return false;
     }
 
+    /**
+     * Metoda obsługujące zdarzenie onCompletition, mające miejsce gdy odtwarzanie dobiegnie końca.
+     * W naszym przypadku odtwarza kolejną piosenkę.
+     *
+     * @param mp referencja do obiektu klasy MediaPlayer dla którego nastąpiło zdarzenie
+     */
     @Override
     public void onCompletion(MediaPlayer mp) {
         if(player.getCurrentPosition()>0){
@@ -158,12 +242,26 @@ public class MusicService extends Service implements
         }
     }
 
+    /**
+     * Metoda obłsugująca zdarzenie onError. W przypadku wystąpienia błędu resetuje odtwarzacz.
+     *
+     * @param mp referencja do obiektu klasy MediaPlayer dla którego wystąpiło zdarzenie
+     * @param what etykieta opisująca błąd
+     * @param extra dodatkowe informacje o błędzie
+     * @return false
+     */
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         mp.reset();
         return false;
     }
 
+    /**
+     * Metoda obsługująca zdarzenie onPrepared, występuje gdy odtwarzacz jest gotowy do odtwarzania
+     * dźwięku. Dodajemy w niej panel odtwarzacza do okna głównej aktywności.
+     *
+     * @param mp uchwyt dla którego nastąpiło zdarzenie
+     */
     @Override
     public void onPrepared(MediaPlayer mp) {
         //start playback
@@ -187,6 +285,10 @@ public class MusicService extends Service implements
         MainActivity.getController().show();
     }
 
+    /**
+     * Metoda obsługująca zdarzenie onDestroy. Usuwa aktywność z pierwszego planu, umożliwiając
+     * zabicie jej gdy potrzeba więcej pamięci.
+     */
     @Override
     public void onDestroy() {
         stopForeground(true);
@@ -198,9 +300,10 @@ public class MusicService extends Service implements
     private ArrayList<Song> songs;
     //current position
     private int songPosn;
+
     private final IBinder musicBind = new MusicBinder();
-    private String songTitle="";
+    private String songTitle=""; // tytuł aktualnie odtwarzanej piosenki
     private static final int NOTIFY_ID=1;
-    private boolean shuffle=false;
+    private boolean shuffle=false; // flaga określająca czy losowe odtwarzanie jest wlączone
     private Random rand;
 }
