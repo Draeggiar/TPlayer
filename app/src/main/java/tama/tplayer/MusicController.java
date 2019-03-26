@@ -15,15 +15,19 @@ public class MusicController extends MediaController {
      *
      * @param c context
      */
-    public MusicController(Context c){
+    public MusicController(Context c) {
         super(c);
     }
 
     /**
-     * Metoda pokazująca odtwarzacz, wywyłuje metodę z klasy bazowej.
+     * Metoda pokazująca odtwarzacz, wywołuje metodę z klasy bazowej.
      */
-    public void show(){
+    public void show() {
         super.show();
+    }
+
+    @Override
+    public void hide() {
     }
 
     /**
@@ -36,7 +40,7 @@ public class MusicController extends MediaController {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         int keyCode = event.getKeyCode();
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             super.hide();
             Context c = getContext();
             ((Activity) c).moveTaskToBack(true);
